@@ -126,11 +126,7 @@ AP aging summary by bucket
 Payment due alert
 Daily finance reporting
 ---
-Resume Bullet Points
-Automated Accounts Payable aging report using MySQL and n8n, reducing manual report preparation and improving overdue invoice visibility.
-Designed SQL logic using `DATEDIFF`, `CASE WHEN`, and `JOIN` to classify invoices into aging buckets and payment priority levels.
-Built an n8n workflow to schedule daily AP reports and email outstanding invoice summaries to the finance team.
-Improved AP control by identifying critical overdue vendor invoices and supporting payment planning.
+
 ---
 Future Enhancements
 Add duplicate invoice detection
