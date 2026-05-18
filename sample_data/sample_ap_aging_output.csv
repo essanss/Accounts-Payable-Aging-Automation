@@ -1,0 +1,9 @@
+vendor_name,vendor_email,invoice_number,invoice_date,due_date,currency,invoice_amount,paid_amount,outstanding_amount,days_overdue,aging_bucket,priority
+ABC Office Supplies,accounts@abcoffice.com,ABC-1002,2026-01-08,2026-02-07,INR,31500,0,31500,100,90+ Days,Critical
+Excel Facility Services,billing@excelfacility.com,EFS-3345,2026-01-28,2026-02-27,INR,56000,0,56000,80,61-90 Days,High
+CloudNet Hosting,finance@cloudnet.com,CLD-9803,2026-02-12,2026-03-14,INR,47500,0,47500,65,61-90 Days,High
+Delta Logistics,ap@deltalogistics.com,DL-7781,2026-02-27,2026-04-13,INR,76000,10000,66000,35,31-60 Days,Medium
+CloudNet Hosting,finance@cloudnet.com,CLD-9802,2026-03-24,2026-04-23,INR,18500,0,18500,25,1-30 Days,Low
+Bright IT Services,billing@brightit.com,BIT-2401,2026-04-13,2026-04-28,INR,42000,0,42000,20,1-30 Days,Low
+ABC Office Supplies,accounts@abcoffice.com,ABC-1001,2026-05-08,2026-06-07,INR,25000,0,25000,-20,Not Due,Not Due
+Bright IT Services,billing@brightit.com,BIT-2402,2026-05-13,2026-05-28,INR,22000,0,22000,-10,Not Due,Not Due

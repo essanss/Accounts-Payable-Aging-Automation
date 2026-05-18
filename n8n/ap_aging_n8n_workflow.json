@@ -1,0 +1,137 @@
+{
+  "name": "AP Aging Report Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "triggerAtHour": 9,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "schedule-trigger",
+      "name": "Daily 9 AM Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT v.vendor_name, v.vendor_email, ai.invoice_number, ai.invoice_date, ai.due_date, ai.currency, ai.invoice_amount, ai.paid_amount, (ai.invoice_amount - ai.paid_amount) AS outstanding_amount, DATEDIFF(CURDATE(), ai.due_date) AS days_overdue, CASE WHEN DATEDIFF(CURDATE(), ai.due_date) <= 0 THEN 'Not Due' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 1 AND 30 THEN '1-30 Days' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 31 AND 60 THEN '31-60 Days' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 61 AND 90 THEN '61-90 Days' ELSE '90+ Days' END AS aging_bucket, CASE WHEN DATEDIFF(CURDATE(), ai.due_date) > 90 THEN 'Critical' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 61 AND 90 THEN 'High' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 31 AND 60 THEN 'Medium' WHEN DATEDIFF(CURDATE(), ai.due_date) BETWEEN 1 AND 30 THEN 'Low' ELSE 'Not Due' END AS priority FROM ap_invoices ai JOIN vendors v ON ai.vendor_id = v.vendor_id WHERE ai.invoice_status IN ('Open', 'Partially Paid') AND (ai.invoice_amount - ai.paid_amount) > 0 ORDER BY days_overdue DESC, outstanding_amount DESC;"
+      },
+      "id": "mysql-ap-aging-query",
+      "name": "Run AP Aging SQL Query",
+      "type": "n8n-nodes-base.mySql",
+      "typeVersion": 2.4,
+      "position": [
+        500,
+        300
+      ],
+      "credentials": {
+        "mySql": {
+          "id": "REPLACE_WITH_MYSQL_CREDENTIAL_ID",
+          "name": "MySQL Finance DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toFile",
+        "fileFormat": "csv",
+        "options": {
+          "fileName": "ap_aging_report_={{$now.format('yyyy-MM-dd')}}.csv"
+        }
+      },
+      "id": "convert-to-csv",
+      "name": "Convert Report to CSV",
+      "type": "n8n-nodes-base.spreadsheetFile",
+      "typeVersion": 2,
+      "position": [
+        760,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "fromEmail": "finance.automation@example.com",
+        "toEmail": "finance.team@example.com",
+        "subject": "Daily AP Aging Report - {{$now.format('dd-MMM-yyyy')}}",
+        "html": "<p>Hello Team,</p><p>Please find attached the daily Accounts Payable Aging Report.</p><p><b>Report includes:</b></p><ul><li>Outstanding vendor invoices</li><li>Days overdue</li><li>Aging bucket</li><li>Payment priority</li></ul><p>Regards,<br>Finance Automation Bot</p>",
+        "attachments": "data"
+      },
+      "id": "send-email",
+      "name": "Email AP Aging Report",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1020,
+        300
+      ],
+      "credentials": {
+        "smtp": {
+          "id": "REPLACE_WITH_SMTP_CREDENTIAL_ID",
+          "name": "SMTP Finance Email"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily 9 AM Schedule": {
+      "main": [
+        [
+          {
+            "node": "Run AP Aging SQL Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run AP Aging SQL Query": {
+      "main": [
+        [
+          {
+            "node": "Convert Report to CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Report to CSV": {
+      "main": [
+        [
+          {
+            "node": "Email AP Aging Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": [
+    {
+      "name": "Finance Automation"
+    },
+    {
+      "name": "Accounts Payable"
+    }
+  ]
+}

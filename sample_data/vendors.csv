@@ -1,0 +1,6 @@
+vendor_id,vendor_name,vendor_email,payment_terms_days,status
+101,ABC Office Supplies,accounts@abcoffice.com,30,Active
+102,Bright IT Services,billing@brightit.com,15,Active
+103,CloudNet Hosting,finance@cloudnet.com,30,Active
+104,Delta Logistics,ap@deltalogistics.com,45,Active
+105,Excel Facility Services,billing@excelfacility.com,30,Active
